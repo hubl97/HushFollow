@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HushFollow - 悄悄关注</title>
+    <style>
+        /* ===== CSS Variables ===== */
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --secondary-color: #95a5a6;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --spacing: 16px;
+        }
+
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing);
+        }
+
+        /* ===== Header ===== */
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        /* ===== Main Content ===== */
+        .app-main {
+            background: var(--card-bg);
+            padding: var(--spacing);
+            border-radius: 0 0 var(--radius) var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== Toolbar ===== */
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: var(--spacing);
+            flex-wrap: wrap;
+        }
+
+        /* ===== Inputs ===== */
+        input[type="text"],
+        input[type="url"] {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* ===== Search Section ===== */
+        .search-section {
+            margin-bottom: var(--spacing);
+        }
+
+        /* ===== Add Section ===== */
+        .add-section {
+            margin-bottom: var(--spacing);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .input-url {
+            flex: 2;
+            min-width: 250px;
+        }
+
+        .input-nickname {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* ===== List Section ===== */
+        .list-section {
+            margin-bottom: var(--spacing);
+        }
+
+        .list-header {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-header h2 {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        #blogger-count {
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        /* ===== Blogger List ===== */
+        .blogger-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .blogger-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.2s;
+        }
+
+        .blogger-item:hover {
+            background: #e9ecef;
+            transform: translateX(2px);
+        }
+
+        .blogger-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .blogger-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .blogger-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .blogger-info a:hover {
+            text-decoration: underline;
+        }
+
+        .blogger-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* ===== Empty State ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            border: 2px dashed var(--border-color);
+        }
+
+        .empty-state p {
+            margin-bottom: 16px;
+        }
+
+        /* ===== Welcome State ===== */
+        .welcome-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-state h3 {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .welcome-state p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+
+        /* ===== Status Bar ===== */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .status-bar .status-message {
+            font-weight: 500;
+        }
+
+        .status-bar .status-message.success {
+            color: var(--success-color);
+        }
+
+        .status-bar .status-message.error {
+            color: var(--danger-color);
+        }
+
+        .status-bar .status-message.warning {
+            color: var(--warning-color);
+        }
+
+        /* ===== Loading State ===== */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== Transitions ===== */
+        .blogger-item {
+            transition: all 0.2s ease;
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        input[type="text"],
+        input[type="url"] {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        /* ===== Loading State ===== */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== Edit Input ===== */
+        .edit-nickname-input {
+            padding: 4px 8px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            font-family: inherit;
+        }
+        
+        .edit-nickname-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        /* ===== Auto Save Toggle ===== */
+        .autosave-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .autosave-toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: var(--border-color);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .autosave-toggle.active {
+            background: var(--success-color);
+        }
+        
+        .autosave-toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .autosave-toggle.active::after {
+            transform: translateX(18px);
+        }
+        
+        .autosave-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .autosave-status.unsaved {
+            color: var(--warning-color);
+        }
+        
+        .autosave-status.saving {
+            color: var(--info-color);
+        }
+        
+        .autosave-status.saved {
+            color: var(--success-color);
+        }
+        
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* ===== Modal ===== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .fileinfo-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        
+        .fileinfo-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 80px;
+            flex-shrink: 0;
+        }
+        
+        .fileinfo-value {
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+        
+        .fileinfo-note {
+            margin-top: 16px;
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 6px;
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .fileinfo-note p {
+            margin: 0;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* ===== Responsive ===== */
+        @media (max-width: 600px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .toolbar {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .blogger-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .blogger-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <h1>🔍 HushFollow</h1>
+            <p class="subtitle">悄悄关注，不留痕迹</p>
+        </header>
+        
+        <main class="app-main">
+            <!-- Toolbar -->
+            <section class="toolbar" id="toolbar">
+                <button id="btn-open" class="btn">📂 打开文件</button>
+                <button id="btn-import" class="btn">📥 导入合并</button>
+                <button id="btn-save" class="btn btn-primary" style="display:none;">💾 保存</button>
+                <button id="btn-export" class="btn">📤 另存为</button>
+                <button id="btn-fileinfo" class="btn" style="display:none;">📁 文件信息</button>
+                
+                <div class="autosave-container" id="autosave-container" style="display:none;">
+                    <span>自动保存</span>
+                    <div class="autosave-toggle active" id="autosave-toggle" title="点击切换自动保存"></div>
+                    <span class="autosave-status saved" id="autosave-status">已保存</span>
+                </div>
+            </section>
+            
+            <!-- Search -->
+            <section class="search-section" id="search-section" style="display:none;">
+                <input type="text" id="search-input" placeholder="搜索博主昵称..." class="input-search">
+            </section>
+            
+            <!-- Add Blogger Form -->
+            <section class="add-section" id="add-section" style="display:none;">
+                <div class="input-group">
+                    <input type="url" id="url-input" placeholder="粘贴微博主页链接，如：https://weibo.com/u/6351705477" class="input-url">
+                    <input type="text" id="nickname-input" placeholder="昵称（可选，默认识别ID）" class="input-nickname">
+                    <button id="btn-add" class="btn btn-primary">➕ 添加</button>
+                </div>
+            </section>
+            
+            <!-- Blogger List -->
+            <section class="list-section" id="list-section">
+                <div class="list-header" id="list-header" style="display:none;">
+                    <h2>博主列表 <span id="blogger-count">(0)</span></h2>
+                </div>
+                <div id="blogger-list" class="blogger-list">
+                    <!-- Welcome State -->
+                    <div id="welcome-state" class="welcome-state">
+                        <h3>欢迎使用 HushFollow</h3>
+                        <p>
+                            这是一个帮助你悄悄关注微博博主的工具<br>
+                            无需在平台上关注，也能随时查看博主动态
+                        </p>
+                        <button id="btn-welcome-quickstart" class="btn btn-success" style="font-size:16px;padding:12px 24px;">
+                            🚀 快速开始
+                        </button>
+                    </div>
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state" style="display:none;">
+                        <p>暂无博主，点击上方添加或打开已有数据文件</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Status Bar -->
+            <footer class="status-bar" id="status-bar">
+                <span id="status-text">就绪</span>
+                <span id="file-name"></span>
+                <span id="last-saved"></span>
+            </footer>
+        </main>
+    </div>
+    
+    <!-- File Info Modal -->
+    <div id="fileinfo-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📁 数据文件信息</h3>
+                <button class="modal-close" onclick="closeFileInfo()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="fileinfo-item">
+                    <span class="fileinfo-label">文件名：</span>
+                    <span class="fileinfo-value" id="fileinfo-name">未选择文件</span>
+                </div>
+                <div class="fileinfo-item">
+                    <span class="fileinfo-label">博主数量：</span>
+                    <span class="fileinfo-value" id="fileinfo-count">0</span>
+                </div>
+                <div class="fileinfo-item">
+                    <span class="fileinfo-label">最后修改：</span>
+                    <span class="fileinfo-value" id="fileinfo-modified">-</span>
+                </div>
+                <div class="fileinfo-item">
+                    <span class="fileinfo-label">存储位置：</span>
+                    <span class="fileinfo-value" id="fileinfo-location">-</span>
+                </div>
+                <div class="fileinfo-note">
+                    <p>💡 提示：浏览器无法直接打开本地文件夹。请根据文件名在文件资源管理器中手动定位。</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="copyFileName()">📋 复制文件名</button>
+                <button class="btn btn-primary" onclick="closeFileInfo()">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ===== Markdown Parser and Generator =====
+        
+        /**
+         * Parse Markdown content and extract blogger list
+         * @param {string} markdown - Markdown content
+         * @returns {Array} Array of blogger objects {nickname, url}
+         */
+        function parseMarkdown(markdown) {
+            if (!markdown || typeof markdown !== 'string') {
+                return [];
+            }
+            
+            const bloggers = [];
+            const lines = markdown.split('\n');
+            
+            // Regular expression to match: - [nickname](url)
+            // Uses non-greedy match to handle special characters in nickname
+            const listItemRegex = /^-\s*\[(.*?)\]\s*\(([^)]+)\)\s*$/;
+            
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                // Skip empty lines and headers
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    continue;
+                }
+                
+                // Try to match list item pattern
+                const match = trimmedLine.match(listItemRegex);
+                if (match) {
+                    bloggers.push({
+                        nickname: match[1].trim(),
+                        url: match[2].trim()
+                    });
+                }
+            }
+            
+            return bloggers;
+        }
+        
+        /**
+         * Generate Markdown content from blogger list
+         * @param {Array} bloggers - Array of blogger objects {nickname, url}
+         * @returns {string} Markdown content
+         */
+        function generateMarkdown(bloggers) {
+            if (!Array.isArray(bloggers)) {
+                bloggers = [];
+            }
+            
+            let markdown = '# HushFollow\n\n';
+            
+            for (const blogger of bloggers) {
+                if (blogger.nickname && blogger.url) {
+                    markdown += `- [${blogger.nickname}](${blogger.url})\n`;
+                }
+            }
+            
+            return markdown;
+        }
+        
+        // ===== Blogger Manager =====
+        
+        /**
+         * Generate unique ID from URL using simple hash
+         * @param {string} url - Weibo URL
+         * @returns {string} Hash ID
+         */
+        function generateId(url) {
+            let hash = 0;
+            for (let i = 0; i < url.length; i++) {
+                const char = url.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return 'blogger_' + Math.abs(hash).toString(36);
+        }
+        
+        /**
+         * Extract user ID from Weibo URL for auto-generated nickname
+         * @param {string} url - Weibo URL
+         * @returns {string} User ID or 'unknown'
+         */
+        function extractUserId(url) {
+            try {
+                const urlObj = new URL(url);
+                const pathParts = urlObj.pathname.split('/').filter(p => p);
+                if (pathParts.length > 0) {
+                    return pathParts[pathParts.length - 1];
+                }
+            } catch (e) {
+                // Invalid URL
+            }
+            return 'unknown';
+        }
+        
+        /**
+         * Validate Weibo URL
+         * @param {string} url - URL to validate
+         * @returns {boolean} Is valid Weibo URL
+         */
+        function isValidWeiboUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.hostname === 'weibo.com' || urlObj.hostname === 'www.weibo.com';
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        /**
+         * Blogger Manager - Handles all blogger data operations
+         */
+        class BloggerManager {
+            constructor() {
+                this.bloggers = [];
+            }
+            
+            /**
+             * Add a new blogger
+             * @param {string} url - Weibo URL
+             * @param {string} nickname - Optional nickname (auto-generated if not provided)
+             * @returns {Object|null} Added blogger or null if invalid/duplicate
+             */
+            add(url, nickname = null) {
+                if (!isValidWeiboUrl(url)) {
+                    return null;
+                }
+                
+                if (this.bloggers.some(b => b.url === url)) {
+                    return null;
+                }
+                
+                if (!nickname) {
+                    const userId = extractUserId(url);
+                    nickname = `微博用户 ${userId}`;
+                }
+                
+                const blogger = {
+                    id: generateId(url),
+                    nickname: nickname.trim(),
+                    url: url.trim(),
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.bloggers.push(blogger);
+                return blogger;
+            }
+            
+            /**
+             * Edit blogger nickname
+             * @param {string} id - Blogger ID
+             * @param {string} newNickname - New nickname
+             * @returns {Object|null} Updated blogger or null if not found
+             */
+            edit(id, newNickname) {
+                const blogger = this.bloggers.find(b => b.id === id);
+                if (!blogger) {
+                    return null;
+                }
+                
+                blogger.nickname = newNickname.trim();
+                return blogger;
+            }
+            
+            /**
+             * Delete blogger by ID
+             * @param {string} id - Blogger ID
+             * @returns {boolean} True if deleted, false if not found
+             */
+            delete(id) {
+                const index = this.bloggers.findIndex(b => b.id === id);
+                if (index === -1) {
+                    return false;
+                }
+                
+                this.bloggers.splice(index, 1);
+                return true;
+            }
+            
+            /**
+             * Get all bloggers
+             * @returns {Array} Copy of bloggers array
+             */
+            getAll() {
+                return [...this.bloggers];
+            }
+            
+            /**
+             * Search bloggers by nickname
+             * @param {string} query - Search query
+             * @returns {Array} Matching bloggers
+             */
+            search(query) {
+                const lowerQuery = query.toLowerCase().trim();
+                if (!lowerQuery) {
+                    return this.getAll();
+                }
+                
+                return this.bloggers.filter(b => 
+                    b.nickname.toLowerCase().includes(lowerQuery)
+                );
+            }
+            
+            /**
+             * Load bloggers from array (used for import/initialization)
+             * @param {Array} bloggers - Array of {nickname, url} objects
+             */
+            loadFromArray(bloggers) {
+                this.bloggers = [];
+                for (const b of bloggers) {
+                    this.add(b.url, b.nickname);
+                }
+            }
+            
+            /**
+             * Get count of bloggers
+             * @returns {number} Count
+             */
+            getCount() {
+                return this.bloggers.length;
+            }
+        }
+        
+        // ===== File Operations =====
+        
+        /**
+         * File Operations - Abstracts browser compatibility for file read/write
+         * Supports both modern (File System Access API) and legacy (download) modes
+         */
+        class FileOperations {
+            constructor() {
+                this.fileHandle = null;
+                this.currentFileName = null;
+            }
+            
+            /**
+             * Check if modern File System Access API is supported
+             * @returns {boolean}
+             */
+            isModernSupported() {
+                return 'showSaveFilePicker' in window && 'showOpenFilePicker' in window;
+            }
+            
+            /**
+             * Generate default filename with timestamp
+             * @returns {string}
+             */
+            generateFilename() {
+                const date = new Date();
+                const timestamp = date.getFullYear() +
+                    String(date.getMonth() + 1).padStart(2, '0') +
+                    String(date.getDate()).padStart(2, '0') + '-' +
+                    String(date.getHours()).padStart(2, '0') +
+                    String(date.getMinutes()).padStart(2, '0') +
+                    String(date.getSeconds()).padStart(2, '0');
+                return `hushfollow-${timestamp}.md`;
+            }
+            
+            /**
+             * Create blob from Markdown content
+             * @param {string} content - Markdown content
+             * @returns {Blob}
+             */
+            createBlob(content) {
+                return new Blob([content], { type: 'text/markdown' });
+            }
+            
+            /**
+             * Parse file content to blogger array
+             * @param {string} content - File content
+             * @returns {Array}
+             */
+            parseFileContent(content) {
+                return parseMarkdown(content);
+            }
+            
+            /**
+             * Generate file content from blogger array
+             * @param {Array} bloggers - Blogger array
+             * @returns {string}
+             */
+            generateFileContent(bloggers) {
+                return generateMarkdown(bloggers);
+            }
+            
+            /**
+             * Open file picker and read file
+             * @returns {Promise<{content: string, handle: FileSystemFileHandle|null, name: string}|null>}
+             */
+            async openFile() {
+                if (this.isModernSupported()) {
+                    try {
+                        const [fileHandle] = await window.showOpenFilePicker({
+                            types: [{
+                                description: 'Markdown Files',
+                                accept: { 'text/markdown': ['.md'] }
+                            }],
+                            multiple: false
+                        });
+                        
+                        const file = await fileHandle.getFile();
+                        const content = await file.text();
+                        
+                        this.fileHandle = fileHandle;
+                        this.currentFileName = file.name;
+                        
+                        return {
+                            content,
+                            handle: fileHandle,
+                            name: file.name
+                        };
+                    } catch (err) {
+                        if (err.name === 'AbortError') {
+                            return null;
+                        }
+                        throw err;
+                    }
+                } else {
+                    return new Promise((resolve, reject) => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = '.md';
+                        
+                        input.onchange = async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) {
+                                resolve(null);
+                                return;
+                            }
+                            
+                            const content = await file.text();
+                            this.currentFileName = file.name;
+                            
+                            resolve({
+                                content,
+                                handle: null,
+                                name: file.name
+                            });
+                        };
+                        
+                        input.onerror = () => reject(new Error('File input error'));
+                        input.click();
+                    });
+                }
+            }
+            
+            /**
+             * Save content to file
+             * @param {string} content - Content to save
+             * @param {FileSystemFileHandle|null} handle - File handle
+             * @returns {Promise<{success: boolean, handle: FileSystemFileHandle|null}>}
+             */
+            async saveFile(content, handle = null) {
+                if (this.isModernSupported()) {
+                    try {
+                        let fileHandle = handle || this.fileHandle;
+                        
+                        // If no handle, show save picker for first-time save
+                        if (!fileHandle) {
+                            fileHandle = await window.showSaveFilePicker({
+                                suggestedName: this.currentFileName || this.generateFilename(),
+                                types: [{
+                                    description: 'Markdown Files',
+                                    accept: { 'text/markdown': ['.md'] }
+                                }]
+                            });
+                            this.fileHandle = fileHandle;
+                            this.currentFileName = fileHandle.name;
+                        }
+                        
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(content);
+                        await writable.close();
+                        
+                        return { success: true, handle: fileHandle };
+                    } catch (err) {
+                        if (err.name === 'AbortError') {
+                            return { success: false, handle: null }; // User cancelled
+                        }
+                        console.error('Save failed:', err);
+                        return { success: false, handle: null };
+                    }
+                } else {
+                    this.downloadFile(content, this.currentFileName || this.generateFilename());
+                    return { success: true, handle: null };
+                }
+            }
+            
+            /**
+             * Download content as file
+             * @param {string} content - Content to download
+             * @param {string} filename - Filename
+             */
+            downloadFile(content, filename) {
+                const blob = this.createBlob(content);
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                URL.revokeObjectURL(url);
+            }
+            
+            /**
+             * Update UI based on browser capabilities
+             */
+            updateUIForBrowserMode() {
+                const saveBtn = document.getElementById('btn-save');
+                const exportBtn = document.getElementById('btn-export');
+                
+                if (this.isModernSupported()) {
+                    saveBtn.style.display = 'inline-flex';
+                    exportBtn.style.display = 'none';
+                } else {
+                    saveBtn.style.display = 'none';
+                    exportBtn.style.display = 'inline-flex';
+                }
+            }
+        }
+        
+        // ===== Application State =====
+        
+        let manager = new BloggerManager();
+        let fileOps = new FileOperations();
+        let currentFileHandle = null;
+        let currentFileName = null;
+        let statusTimeout = null;
+        let autoSaveEnabled = true;
+        let hasUnsavedChanges = false;
+        let autoSaveTimeout = null;
+        let isFirstTime = true;
+        
+        // ===== Local Storage Manager =====
+        
+        const STORAGE_KEY = 'hushfollow_state';
+        
+        /**
+         * Save application state to localStorage
+         */
+        function saveState() {
+            try {
+                const state = {
+                    isFirstTime: false,
+                    currentFileName: currentFileName,
+                    bloggers: manager.getAll(),
+                    lastModified: new Date().toISOString()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.warn('Failed to save state:', e);
+            }
+        }
+        
+        /**
+         * Load application state from localStorage
+         * @returns {Object|null}
+         */
+        function loadState() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : null;
+            } catch (e) {
+                console.warn('Failed to load state:', e);
+                return null;
+            }
+        }
+        
+        /**
+         * Clear application state
+         */
+        function clearState() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {
+                console.warn('Failed to clear state:', e);
+            }
+        }
+        
+        /**
+         * Check if this is first time use
+         * @returns {boolean}
+         */
+        function checkFirstTime() {
+            const state = loadState();
+            if (!state) return true;
+            return state.isFirstTime !== false;
+        }
+        
+        /**
+         * Show welcome screen for first-time users
+         */
+        function showWelcomeScreen() {
+            const welcomeState = document.getElementById('welcome-state');
+            const emptyState = document.getElementById('empty-state');
+            const listHeader = document.getElementById('list-header');
+            const addSection = document.getElementById('add-section');
+            const searchSection = document.getElementById('search-section');
+            
+            welcomeState.style.display = 'block';
+            emptyState.style.display = 'none';
+            listHeader.style.display = 'none';
+            addSection.style.display = 'none';
+            searchSection.style.display = 'none';
+        }
+        
+        /**
+         * Show normal working interface
+         */
+        function showWorkingInterface() {
+            const welcomeState = document.getElementById('welcome-state');
+            const addSection = document.getElementById('add-section');
+            const searchSection = document.getElementById('search-section');
+            
+            welcomeState.style.display = 'none';
+            addSection.style.display = 'block';
+            searchSection.style.display = 'block';
+            
+            // Show auto save container if modern browser
+            if (fileOps.isModernSupported()) {
+                showAutoSaveContainer();
+            }
+            
+            // Show file info button if we have a file
+            if (currentFileName) {
+                showFileInfoButton();
+            }
+        }
+        
+        /**
+         * Show file info button
+         */
+        function showFileInfoButton() {
+            const btn = document.getElementById('btn-fileinfo');
+            if (btn) {
+                btn.style.display = 'inline-flex';
+            }
+        }
+        
+        /**
+         * Hide file info button
+         */
+        function hideFileInfoButton() {
+            const btn = document.getElementById('btn-fileinfo');
+            if (btn) {
+                btn.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Show file info modal
+         */
+        function showFileInfo() {
+            const modal = document.getElementById('fileinfo-modal');
+            const nameEl = document.getElementById('fileinfo-name');
+            const countEl = document.getElementById('fileinfo-count');
+            const modifiedEl = document.getElementById('fileinfo-modified');
+            const locationEl = document.getElementById('fileinfo-location');
+            
+            // Update info
+            nameEl.textContent = currentFileName || '未选择文件';
+            countEl.textContent = manager.getCount() + ' 位博主';
+            
+            const state = loadState();
+            if (state && state.lastModified) {
+                const date = new Date(state.lastModified);
+                modifiedEl.textContent = date.toLocaleString('zh-CN');
+            } else {
+                modifiedEl.textContent = '-';
+            }
+            
+            // Browser cannot access full path, show helpful message
+            if (currentFileName) {
+                locationEl.innerHTML = `
+                    <div style="color: var(--text-secondary);">
+                        <div>📁 文件存储在您的电脑本地</div>
+                        <div style="margin-top: 4px; font-size: 12px;">
+                            提示：使用快捷键 Ctrl+J 可打开浏览器的下载列表，
+                            右键点击文件选择"在文件夹中显示"即可定位
+                        </div>
+                    </div>
+                `;
+            } else {
+                locationEl.textContent = '未选择文件';
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        /**
+         * Close file info modal
+         */
+        function closeFileInfo() {
+            const modal = document.getElementById('fileinfo-modal');
+            modal.style.display = 'none';
+        }
+        
+        /**
+         * Copy file name to clipboard
+         */
+        async function copyFileName() {
+            if (!currentFileName) {
+                showStatus('没有文件名可复制', 'warning');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(currentFileName);
+                showStatus('文件名已复制到剪贴板', 'success');
+            } catch (err) {
+                // Fallback for browsers that don't support clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = currentFileName;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showStatus('文件名已复制到剪贴板', 'success');
+            }
+        }
+        
+        /**
+         * Load previous data from localStorage
+         */
+        async function loadPreviousData() {
+            const state = loadState();
+            
+            if (state && state.bloggers && state.bloggers.length > 0) {
+                // Restore bloggers from localStorage
+                manager.loadFromArray(state.bloggers);
+                currentFileName = state.currentFileName || null;
+                
+                showWorkingInterface();
+                renderBloggerList(manager.getAll());
+                
+                if (currentFileName) {
+                    showStatus(`已恢复 ${state.bloggers.length} 位博主`, 'success');
+                    updateFileStatus();
+                }
+            } else {
+                // No previous data, show empty working interface
+                showWorkingInterface();
+                renderBloggerList([]);
+            }
+        }
+        
+        /**
+         * Restore file handle from previous session
+         * @returns {Promise<FileSystemFileHandle|null>}
+         */
+        async function restoreFileHandle() {
+            // Note: File handles cannot be stored in localStorage
+            // They need to be stored in IndexedDB
+            // For now, we'll just return null and let user re-select
+            return null;
+        }
+        
+        // ===== UI Rendering =====
+        
+        /**
+         * Render blogger list
+         * @param {Array} bloggers - Bloggers to render
+         */
+        function renderBloggerList(bloggers) {
+            const listContainer = document.getElementById('blogger-list');
+            const emptyState = document.getElementById('empty-state');
+            const welcomeState = document.getElementById('welcome-state');
+            const listHeader = document.getElementById('list-header');
+            const countSpan = document.getElementById('blogger-count');
+            
+            // Clear existing items (keep empty and welcome states)
+            const items = listContainer.querySelectorAll('.blogger-item');
+            items.forEach(item => item.remove());
+            
+            if (bloggers.length === 0) {
+                // Show appropriate empty state
+                if (manager.getCount() === 0 && isFirstTime) {
+                    welcomeState.style.display = 'block';
+                    emptyState.style.display = 'none';
+                    listHeader.style.display = 'none';
+                } else {
+                    welcomeState.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    listHeader.style.display = 'flex';
+                }
+            } else {
+                welcomeState.style.display = 'none';
+                emptyState.style.display = 'none';
+                listHeader.style.display = 'flex';
+                
+                bloggers.forEach(blogger => {
+                    const item = createBloggerElement(blogger);
+                    listContainer.appendChild(item);
+                });
+            }
+            
+            countSpan.textContent = `(${manager.getCount()})`;
+        }
+        
+        /**
+         * Create blogger DOM element
+         * @param {Object} blogger - Blogger object
+         * @returns {HTMLElement}
+         */
+        function createBloggerElement(blogger) {
+            const div = document.createElement('div');
+            div.className = 'blogger-item';
+            div.dataset.id = blogger.id;
+            
+            div.innerHTML = `
+                <div class="blogger-info">
+                    <h4 class="blogger-nickname">${escapeHtml(blogger.nickname)}</h4>
+                    <a href="${blogger.url}" target="_blank" rel="noopener noreferrer">${blogger.url}</a>
+                </div>
+                <div class="blogger-actions">
+                    <a href="${blogger.url}" target="_blank" rel="noopener noreferrer" class="btn btn-small btn-primary" style="text-decoration: none;">访问</a>
+                    <button class="btn btn-small" onclick="startEdit('${blogger.id}')">编辑</button>
+                    <button class="btn btn-small btn-danger" onclick="handleDelete('${blogger.id}')">删除</button>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // ===== Auto Save Functions =====
+        
+        /**
+         * Mark data as changed and trigger auto save
+         */
+        function markAsChanged() {
+            hasUnsavedChanges = true;
+            updateAutoSaveStatus('unsaved', '未保存');
+            
+            // Save to localStorage immediately for data persistence
+            saveState();
+            
+            // Debounce auto save to file
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+            
+            autoSaveTimeout = setTimeout(() => {
+                if (autoSaveEnabled) {
+                    performAutoSave();
+                }
+            }, 1000); // Wait 1 second after last change
+        }
+        
+        /**
+         * Perform auto save
+         */
+        async function performAutoSave() {
+            if (!hasUnsavedChanges) return;
+            
+            // Auto save only works when we have a file handle (modern browser)
+            // For first-time users, they need to manually save once to set the file location
+            if (!currentFileHandle) {
+                if (fileOps.isModernSupported()) {
+                    updateAutoSaveStatus('unsaved', '请手动保存一次以启用自动保存');
+                } else {
+                    updateAutoSaveStatus('unsaved', '当前浏览器不支持自动保存，请手动导出');
+                }
+                return;
+            }
+            
+            updateAutoSaveStatus('saving', '保存中...');
+            
+            try {
+                const content = fileOps.generateFileContent(manager.getAll());
+                const result = await fileOps.saveFile(content, currentFileHandle);
+                
+                if (result.success) {
+                    hasUnsavedChanges = false;
+                    updateAutoSaveStatus('saved', '已保存');
+                    updateFileStatus();
+                    saveState();
+                } else {
+                    updateAutoSaveStatus('unsaved', '保存已取消');
+                }
+            } catch (err) {
+                console.error('Auto save failed:', err);
+                updateAutoSaveStatus('unsaved', '保存失败');
+            }
+        }
+        
+        /**
+         * Update auto save status UI
+         * @param {string} state - unsaved, saving, saved
+         * @param {string} text
+         */
+        function updateAutoSaveStatus(state, text) {
+            const statusEl = document.getElementById('autosave-status');
+            if (!statusEl) return;
+            
+            statusEl.className = 'autosave-status ' + state;
+            statusEl.textContent = text;
+        }
+        
+        /**
+         * Toggle auto save
+         */
+        function toggleAutoSave() {
+            autoSaveEnabled = !autoSaveEnabled;
+            const toggle = document.getElementById('autosave-toggle');
+            
+            if (autoSaveEnabled) {
+                toggle.classList.add('active');
+                showStatus('自动保存已开启', 'success');
+                // Try to save immediately if there are pending changes
+                if (hasUnsavedChanges) {
+                    performAutoSave();
+                }
+            } else {
+                toggle.classList.remove('active');
+                showStatus('自动保存已关闭', 'warning');
+            }
+        }
+        
+        /**
+         * Show auto save container
+         */
+        function showAutoSaveContainer() {
+            const container = document.getElementById('autosave-container');
+            if (container) {
+                container.style.display = 'flex';
+            }
+        }
+        
+        /**
+         * Escape HTML special characters
+         * @param {string} text
+         * @returns {string}
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        /**
+         * Visit blogger URL
+         * @param {string} url
+         */
+        function visitBlogger(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        
+        /**
+         * Start editing blogger nickname
+         * @param {string} id
+         */
+        function startEdit(id) {
+            const blogger = manager.getAll().find(b => b.id === id);
+            if (!blogger) return;
+            
+            const item = document.querySelector(`.blogger-item[data-id="${id}"]`);
+            if (!item) return;
+            
+            const nicknameEl = item.querySelector('.blogger-nickname');
+            const currentNickname = blogger.nickname;
+            
+            // Replace with input
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentNickname;
+            input.className = 'edit-nickname-input';
+            input.style.cssText = 'padding: 4px 8px; border: 2px solid var(--primary-color); border-radius: 4px; font-size: 16px; width: 100%;';
+            
+            nicknameEl.replaceWith(input);
+            input.focus();
+            input.select();
+            
+            // Save on blur or enter
+            const saveEdit = () => {
+                const newNickname = input.value.trim();
+                if (newNickname && newNickname !== currentNickname) {
+                    manager.edit(id, newNickname);
+                    showStatus('昵称已更新', 'success');
+                    markAsChanged();
+                }
+                renderBloggerList(manager.getAll());
+            };
+            
+            input.addEventListener('blur', saveEdit);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    renderBloggerList(manager.getAll());
+                }
+            });
+        }
+        
+        // ===== Event Handlers =====
+        
+        /**
+         * Handle add blogger
+         */
+        function handleAdd() {
+            const urlInput = document.getElementById('url-input');
+            const nicknameInput = document.getElementById('nickname-input');
+            
+            const url = urlInput.value.trim();
+            const nickname = nicknameInput.value.trim();
+            
+            if (!url) {
+                showStatus('请输入微博链接', 'error');
+                return;
+            }
+            
+            const blogger = manager.add(url, nickname || null);
+            
+            if (blogger === null) {
+                // Check if it's duplicate or invalid
+                if (!isValidWeiboUrl(url)) {
+                    showStatus('请输入有效的微博链接（如：https://weibo.com/u/1234567890）', 'error');
+                } else {
+                    showStatus('该博主已在列表中', 'warning');
+                }
+                return;
+            }
+            
+            showStatus(`已添加：${blogger.nickname}`, 'success');
+            urlInput.value = '';
+            nicknameInput.value = '';
+            
+            // Trigger auto save
+            markAsChanged();
+            
+            // Show add section and search if hidden
+            document.getElementById('add-section').style.display = 'block';
+            document.getElementById('search-section').style.display = 'block';
+            
+            renderBloggerList(manager.getAll());
+        }
+        
+        /**
+         * Handle delete blogger
+         * @param {string} id
+         */
+        function handleDelete(id) {
+            const blogger = manager.getAll().find(b => b.id === id);
+            if (!blogger) return;
+            
+            if (confirm(`确定要删除博主 "${blogger.nickname}" 吗？`)) {
+                manager.delete(id);
+                showStatus('已删除', 'success');
+                markAsChanged();
+                renderBloggerList(manager.getAll());
+            }
+        }
+        
+        /**
+         * Handle search
+         */
+        function handleSearch() {
+            const query = document.getElementById('search-input').value;
+            const results = manager.search(query);
+            renderBloggerList(results);
+        }
+        
+        /**
+         * Handle open file
+         */
+        async function handleOpenFile() {
+            setButtonLoading('btn-open', true);
+            try {
+                const result = await fileOps.openFile();
+                if (!result) return;
+                
+                const bloggers = fileOps.parseFileContent(result.content);
+                manager.loadFromArray(bloggers);
+                currentFileHandle = result.handle;
+                currentFileName = result.name;
+                
+                // Mark as not first time and save state
+                isFirstTime = false;
+                saveState();
+                
+                showStatus(`已加载 ${bloggers.length} 位博主`, 'success');
+                updateFileStatus();
+                
+                showWorkingInterface();
+                
+                renderBloggerList(manager.getAll());
+            } catch (err) {
+                showStatus('打开文件失败：' + err.message, 'error');
+            } finally {
+                setButtonLoading('btn-open', false);
+            }
+        }
+        
+        /**
+         * Handle save file
+         */
+        async function handleSaveFile() {
+            setButtonLoading('btn-save', true);
+            const content = fileOps.generateFileContent(manager.getAll());
+            
+            try {
+                const result = await fileOps.saveFile(content, currentFileHandle);
+                if (result.success) {
+                    if (fileOps.isModernSupported()) {
+                        showStatus('已保存', 'success');
+                        hasUnsavedChanges = false;
+                        updateAutoSaveStatus('saved', '已保存');
+                        showAutoSaveContainer();
+                        
+                        // Update file handle if returned
+                        if (result.handle) {
+                            currentFileHandle = result.handle;
+                            currentFileName = result.handle.name;
+                        }
+                        
+                        // Save state
+                        saveState();
+                    } else {
+                        showStatus('已导出，请手动替换原文件', 'warning');
+                    }
+                    updateFileStatus();
+                } else {
+                    showStatus('保存已取消', 'info');
+                }
+            } catch (err) {
+                showStatus('保存失败：' + err.message, 'error');
+            } finally {
+                setButtonLoading('btn-save', false);
+            }
+        }
+        
+        /**
+         * Handle export file
+         */
+        function handleExportFile() {
+            setButtonLoading('btn-export', true);
+            const content = fileOps.generateFileContent(manager.getAll());
+            const filename = currentFileName || fileOps.generateFilename();
+            fileOps.downloadFile(content, filename);
+            showStatus('已导出文件', 'success');
+            setTimeout(() => setButtonLoading('btn-export', false), 500);
+        }
+        
+        /**
+         * Handle import file (merge)
+         */
+        async function handleImportFile() {
+            setButtonLoading('btn-import', true);
+            try {
+                const result = await fileOps.openFile();
+                if (!result) return;
+                
+                const importedBloggers = fileOps.parseFileContent(result.content);
+                const existingCount = manager.getCount();
+                
+                let skippedCount = 0;
+                for (const blogger of importedBloggers) {
+                    const added = manager.add(blogger.url, blogger.nickname);
+                    if (added === null) {
+                        skippedCount++;
+                    }
+                }
+                
+                const addedCount = manager.getCount() - existingCount;
+                showStatus(`导入完成：新增 ${addedCount} 位，跳过 ${skippedCount} 个重复项`, 'success');
+                
+                if (addedCount > 0) {
+                    markAsChanged();
+                }
+                
+                renderBloggerList(manager.getAll());
+            } catch (err) {
+                showStatus('导入失败：' + err.message, 'error');
+            } finally {
+                setButtonLoading('btn-import', false);
+            }
+        }
+        
+        /**
+         * Handle quick start
+         */
+        async function handleQuickStart() {
+            setButtonLoading('btn-welcome-quickstart', true);
+            
+            const sampleContent = generateSampleMarkdown();
+            const filename = fileOps.generateFilename();
+            
+            fileOps.downloadFile(sampleContent, filename);
+            
+            const bloggers = parseMarkdown(sampleContent);
+            manager.loadFromArray(bloggers);
+            
+            // Mark as not first time
+            isFirstTime = false;
+            
+            // Set file name for auto save
+            currentFileName = filename;
+            
+            // Save state
+            saveState();
+            
+            showStatus('示例文件已下载，请将其移动到方便的位置', 'success');
+            
+            showWorkingInterface();
+            
+            renderBloggerList(manager.getAll());
+            
+            setTimeout(() => {
+                setButtonLoading('btn-welcome-quickstart', false);
+            }, 500);
+        }
+        
+        /**
+         * Generate sample Markdown content
+         * @returns {string}
+         */
+        function generateSampleMarkdown() {
+            return `# HushFollow
+
+> 欢迎使用 HushFollow！这是一个帮助你悄悄关注微博博主的工具。
+> 
+> 使用方式：
+> 1. 在上方输入框粘贴微博主页链接
+> 2. 点击"添加"按钮
+> 3. 点击"保存"将列表保存到文件
+> 4. 将文件上传到你的 GitHub 仓库或网盘进行备份
+
+- [示例博主 - 可以删除](https://weibo.com/u/6351705477)
+`;
+        }
+        
+        // ===== Status and UI Updates =====
+        
+        /**
+         * Set button loading state
+         * @param {string} buttonId
+         * @param {boolean} loading
+         */
+        function setButtonLoading(buttonId, loading) {
+            const btn = document.getElementById(buttonId);
+            if (!btn) return;
+            
+            if (loading) {
+                btn.disabled = true;
+                btn.classList.add('btn-loading');
+                btn.dataset.originalText = btn.textContent;
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('btn-loading');
+            }
+        }
+        
+        /**
+         * Show status message
+         * @param {string} message
+         * @param {string} type - info, success, error, warning
+         */
+        function showStatus(message, type = 'info') {
+            const statusText = document.getElementById('status-text');
+            
+            // Clear previous timeout
+            if (statusTimeout) {
+                clearTimeout(statusTimeout);
+            }
+            
+            statusText.textContent = message;
+            statusText.className = 'status-message ' + type;
+            
+            // Auto-clear after 5 seconds
+            statusTimeout = setTimeout(() => {
+                statusText.textContent = '就绪';
+                statusText.className = '';
+            }, 5000);
+        }
+        
+        /**
+         * Update file status display
+         */
+        function updateFileStatus() {
+            const fileNameEl = document.getElementById('file-name');
+            const lastSavedEl = document.getElementById('last-saved');
+            
+            if (currentFileName) {
+                fileNameEl.textContent = `文件: ${currentFileName}`;
+            }
+            
+            const now = new Date();
+            lastSavedEl.textContent = `更新于: ${now.toLocaleString('zh-CN')}`;
+        }
+        
+        // ===== Event Listeners =====
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize file operations
+            fileOps = new FileOperations();
+            fileOps.updateUIForBrowserMode();
+            
+            // Check if first time use
+            isFirstTime = checkFirstTime();
+            
+            if (isFirstTime) {
+                // First time: show welcome screen
+                showWelcomeScreen();
+            } else {
+                // Returning user: try to load previous data
+                await loadPreviousData();
+            }
+            
+            // Button event listeners
+            document.getElementById('btn-add').addEventListener('click', handleAdd);
+            document.getElementById('btn-open').addEventListener('click', handleOpenFile);
+            document.getElementById('btn-save').addEventListener('click', handleSaveFile);
+            document.getElementById('btn-export').addEventListener('click', handleExportFile);
+            document.getElementById('btn-import').addEventListener('click', handleImportFile);
+            document.getElementById('btn-fileinfo').addEventListener('click', showFileInfo);
+            document.getElementById('btn-welcome-quickstart').addEventListener('click', handleQuickStart);
+            
+            // Auto save toggle
+            const autoSaveToggle = document.getElementById('autosave-toggle');
+            if (autoSaveToggle) {
+                autoSaveToggle.addEventListener('click', toggleAutoSave);
+            }
+            
+            // Input event listeners
+            document.getElementById('url-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleAdd();
+                }
+            });
+            
+            document.getElementById('search-input').addEventListener('input', handleSearch);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    if (fileOps.isModernSupported()) {
+                        handleSaveFile();
+                    } else {
+                        handleExportFile();
+                    }
+                }
+            });
+            
+            console.log('HushFollow initialized');
+        });
+    </script>
+</body>
+</html>
