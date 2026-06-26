@@ -79,7 +79,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -308,41 +308,18 @@
             color: var(--warning-color);
         }
 
-        /* ===== Loading State ===== */
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ===== Transitions ===== */
-        .blogger-item {
-            transition: all 0.2s ease;
-        }
-        
-        .btn {
-            transition: all 0.2s ease;
-        }
-        
-        input[type="text"],
-        input[type="url"] {
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        
+        /* ===== Inputs Focus ===== */
         input[type="text"]:focus,
         input[type="url"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         /* ===== Loading State ===== */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .btn-loading {
             position: relative;
             color: transparent !important;
@@ -361,10 +338,6 @@
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
         
         /* ===== Edit Input ===== */
@@ -571,6 +544,24 @@
             border-top: 1px solid var(--border-color);
         }
         
+        /* ===== Drag & Drop ===== */
+        .blogger-item[draggable="true"] {
+            cursor: grab;
+        }
+
+        .blogger-item[draggable="true"]:active {
+            cursor: grabbing;
+        }
+
+        .blogger-item.dragging {
+            opacity: 0.4;
+            background: #d0d0d0;
+        }
+
+        .blogger-item.drag-over {
+            border-top: 3px solid var(--primary-color);
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 600px) {
             .input-group {
@@ -705,7 +696,10 @@
     </div>
     
     <script>
-        // ===== Markdown Parser and Generator =====
+        (function () {
+            'use strict';
+        
+            // ===== Markdown Parser and Generator =====
         
         /**
          * Parse Markdown content and extract blogger list
@@ -921,6 +915,17 @@
             }
             
             /**
+             * Reorder bloggers by moving one item from fromIndex to toIndex
+             * @param {number} fromIndex
+             * @param {number} toIndex
+             */
+            reorder(fromIndex, toIndex) {
+                if (fromIndex === toIndex) return;
+                const [item] = this.bloggers.splice(fromIndex, 1);
+                this.bloggers.splice(toIndex, 0, item);
+            }
+
+            /**
              * Get count of bloggers
              * @returns {number} Count
              */
@@ -1114,19 +1119,11 @@
             }
             
             /**
-             * Update UI based on browser capabilities
+             * Check if modern File System Access API is supported
+             * @returns {boolean}
              */
-            updateUIForBrowserMode() {
-                const saveBtn = document.getElementById('btn-save');
-                const exportBtn = document.getElementById('btn-export');
-                
-                if (this.isModernSupported()) {
-                    saveBtn.style.display = 'inline-flex';
-                    exportBtn.style.display = 'none';
-                } else {
-                    saveBtn.style.display = 'none';
-                    exportBtn.style.display = 'inline-flex';
-                }
+            canAutoSave() {
+                return this.isModernSupported();
             }
         }
         
@@ -1401,8 +1398,8 @@
                 emptyState.style.display = 'none';
                 listHeader.style.display = 'flex';
                 
-                bloggers.forEach(blogger => {
-                    const item = createBloggerElement(blogger);
+                bloggers.forEach((blogger, index) => {
+                    const item = createBloggerElement(blogger, index);
                     listContainer.appendChild(item);
                 });
             }
@@ -1415,10 +1412,57 @@
          * @param {Object} blogger - Blogger object
          * @returns {HTMLElement}
          */
-        function createBloggerElement(blogger) {
+        // ===== Drag and Drop =====
+
+        let dragSrcIndex = null;
+
+        function handleDragStart(e) {
+            const item = e.currentTarget;
+            dragSrcIndex = parseInt(item.dataset.index, 10);
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.blogger-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const item = e.currentTarget;
+            item.classList.remove('drag-over');
+            const targetIndex = parseInt(item.dataset.index, 10);
+            if (dragSrcIndex !== null && dragSrcIndex !== targetIndex) {
+                manager.reorder(dragSrcIndex, targetIndex);
+                markAsChanged();
+                renderBloggerList(manager.getAll());
+                showStatus('已调整顺序', 'success');
+            }
+        }
+
+        /**
+         * Create blogger DOM element
+         * @param {Object} blogger - Blogger object
+         * @param {number} index - Position in list
+         * @returns {HTMLElement}
+         */
+        function createBloggerElement(blogger, index) {
             const div = document.createElement('div');
             div.className = 'blogger-item';
             div.dataset.id = blogger.id;
+            div.draggable = true;
+            div.dataset.index = index;
             
             div.innerHTML = `
                 <div class="blogger-info">
@@ -1431,7 +1475,14 @@
                     <button class="btn btn-small btn-danger" onclick="handleDelete('${blogger.id}')">删除</button>
                 </div>
             `;
-            
+
+            // Drag and drop event listeners
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragend', handleDragEnd);
+            div.addEventListener('dragover', handleDragOver);
+            div.addEventListener('dragleave', handleDragLeave);
+            div.addEventListener('drop', handleDrop);
+
             return div;
         }
         
@@ -1900,12 +1951,28 @@
             lastSavedEl.textContent = `更新于: ${now.toLocaleString('zh-CN')}`;
         }
         
+        // ===== Toolbar UI =====
+
+        /**
+         * Show or hide toolbar buttons based on browser support
+         */
+        function updateToolbarUI() {
+            const saveBtn = document.getElementById('btn-save');
+            const exportBtn = document.getElementById('btn-export');
+
+            if (fileOps.canAutoSave()) {
+                saveBtn.style.display = 'inline-flex';
+                exportBtn.style.display = 'none';
+            } else {
+                saveBtn.style.display = 'none';
+                exportBtn.style.display = 'inline-flex';
+            }
+        }
+        
         // ===== Event Listeners =====
         
         document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize file operations
-            fileOps = new FileOperations();
-            fileOps.updateUIForBrowserMode();
+            updateToolbarUI();
             
             // Check if first time use
             isFirstTime = checkFirstTime();
@@ -1957,6 +2024,13 @@
             
             console.log('HushFollow initialized');
         });
+        
+        // Expose onclick handlers from HTML attributes
+        window.closeFileInfo = closeFileInfo;
+        window.copyFileName = copyFileName;
+        window.startEdit = startEdit;
+        window.handleDelete = handleDelete;
+    })();
     </script>
 </body>
 </html>
