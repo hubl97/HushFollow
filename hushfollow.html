@@ -5,23 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HushFollow - 悄悄关注</title>
     <style>
-        /* ===== CSS Variables ===== */
+        /* ===== Apple-Inspired Frosted Glass Theme ===== */
         :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --secondary-color: #95a5a6;
-            --success-color: #27ae60;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #3498db;
-            --bg-color: #f5f5f5;
-            --card-bg: #ffffff;
-            --text-primary: #2c3e50;
-            --text-secondary: #7f8c8d;
-            --border-color: #e0e0e0;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --radius: 8px;
-            --spacing: 16px;
+            --apple-blue: #0071e3;
+            --apple-blue-hover: #0077ED;
+            --apple-red: #ff3b30;
+            --apple-red-hover: #ff453a;
+            --apple-green: #34c759;
+            --apple-orange: #ff9500;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-tertiary: #aeaeb2;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-bg-hover: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            --glass-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-lg: 18px;
+            --radius-pill: 980px;
+            --spacing: 24px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         /* ===== Reset & Base ===== */
@@ -32,88 +36,119 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #f5f5f7 0%, #fbfbfd 40%, #f5f5f7 100%);
             color: var(--text-primary);
-            line-height: 1.6;
+            line-height: 1.5;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         #app {
-            max-width: 800px;
+            max-width: 760px;
             margin: 0 auto;
-            padding: var(--spacing);
+            padding: calc(var(--spacing) * 2) var(--spacing);
         }
 
-        /* ===== Header ===== */
+        /* ===== Frosted Glass Mixin ===== */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        /* ===== Header — Minimal Apple Style ===== */
         .app-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: var(--radius) var(--radius) 0 0;
             text-align: center;
+            padding: 48px 24px 36px;
+            margin-bottom: var(--spacing);
         }
 
         .app-header h1 {
-            font-size: 28px;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
             margin-bottom: 8px;
         }
 
         .subtitle {
-            opacity: 0.9;
-            font-size: 14px;
+            color: var(--text-secondary);
+            font-size: 17px;
+            font-weight: 400;
+            letter-spacing: 0.01em;
         }
 
-        /* ===== Main Content ===== */
+        /* ===== Main Content — Frosted Glass Card ===== */
         .app-main {
-            background: var(--card-bg);
+            background: var(--glass-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius-lg);
             padding: var(--spacing);
-            border-radius: 0 0 var(--radius) var(--radius);
-            box-shadow: var(--shadow);
         }
 
-        /* ===== Buttons ===== */
+        /* ===== Buttons — Apple Pill Style ===== */
         .btn {
-            padding: 10px 16px;
+            padding: 8px 18px;
             border: none;
-            border-radius: 6px;
+            border-radius: var(--radius-pill);
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s ease;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
-            background: var(--secondary-color);
-            color: white;
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-primary);
+            -webkit-appearance: none;
         }
 
         .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.08);
         }
 
         .btn:active {
-            transform: translateY(0);
+            transform: scale(0.97);
         }
 
         .btn-primary {
-            background: var(--primary-color);
+            background: var(--apple-blue);
+            color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-hover);
+            background: var(--apple-blue-hover);
         }
 
         .btn-success {
-            background: var(--success-color);
+            background: var(--apple-blue);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--apple-blue-hover);
         }
 
         .btn-danger {
-            background: var(--danger-color);
+            background: var(--apple-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--apple-red-hover);
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
@@ -121,26 +156,40 @@
         /* ===== Toolbar ===== */
         .toolbar {
             display: flex;
-            gap: 8px;
-            margin-bottom: var(--spacing);
+            gap: 10px;
+            margin-bottom: calc(var(--spacing) * 1.5);
             flex-wrap: wrap;
+            align-items: center;
+            padding-bottom: calc(var(--spacing) * 1.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
-        /* ===== Inputs ===== */
+        /* ===== Inputs — Minimal Apple Style ===== */
         input[type="text"],
         input[type="url"] {
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
             width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text-primary);
+            -webkit-appearance: none;
         }
 
         input[type="text"]:focus,
         input[type="url"]:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--apple-blue);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+        }
+
+        input[type="text"]::placeholder,
+        input[type="url"]::placeholder {
+            color: var(--text-tertiary);
         }
 
         /* ===== Search Section ===== */
@@ -155,7 +204,7 @@
 
         .input-group {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -175,43 +224,48 @@
         }
 
         .list-header {
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: baseline;
         }
 
         .list-header h2 {
-            font-size: 18px;
+            font-size: 21px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
             color: var(--text-primary);
         }
 
         #blogger-count {
             color: var(--text-secondary);
-            font-weight: normal;
+            font-weight: 400;
+            font-size: 15px;
         }
 
-        /* ===== Blogger List ===== */
+        /* ===== Blogger List — Frosted Cards ===== */
         .blogger-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .blogger-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid var(--primary-color);
-            transition: all 0.2s;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: saturate(150%) blur(10px);
+            -webkit-backdrop-filter: saturate(150%) blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius);
+            transition: var(--transition);
         }
 
         .blogger-item:hover {
-            background: #e9ecef;
-            transform: translateX(2px);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
         }
 
         .blogger-info {
@@ -221,40 +275,61 @@
 
         .blogger-info h4 {
             color: var(--text-primary);
-            margin-bottom: 5px;
-            font-size: 16px;
+            margin-bottom: 4px;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        .blogger-nickname {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-decoration: none;
+            display: inline;
+            transition: opacity 0.2s;
+        }
+
+        .blogger-nickname:hover {
+            opacity: 0.7;
         }
 
         .blogger-info a {
-            color: var(--primary-color);
+            color: var(--apple-blue);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             word-break: break-all;
+            opacity: 0.8;
+            transition: opacity 0.2s;
         }
 
         .blogger-info a:hover {
-            text-decoration: underline;
+            opacity: 1;
+            text-decoration: none;
         }
 
         .blogger-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
         .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: 5px 12px;
+            font-size: 13px;
+            border-radius: var(--radius-pill);
         }
 
         /* ===== Empty State ===== */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: var(--text-secondary);
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.3);
             border-radius: var(--radius);
-            border: 2px dashed var(--border-color);
+            border: 1px dashed rgba(0, 0, 0, 0.1);
+            font-size: 15px;
         }
 
         .empty-state p {
@@ -264,32 +339,37 @@
         /* ===== Welcome State ===== */
         .welcome-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
         }
 
         .welcome-state h3 {
             margin-bottom: 16px;
             color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
         .welcome-state p {
             color: var(--text-secondary);
-            margin-bottom: 24px;
-            line-height: 1.8;
+            margin-bottom: 32px;
+            line-height: 1.7;
+            font-size: 15px;
         }
 
-        /* ===== Status Bar ===== */
+        /* ===== Status Bar — Minimal ===== */
         .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 14px 0;
+            margin-top: calc(var(--spacing) * 1.5);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            font-size: 12px;
             color: var(--text-secondary);
             flex-wrap: wrap;
             gap: 8px;
+            letter-spacing: 0.02em;
         }
 
         .status-bar .status-message {
@@ -297,25 +377,25 @@
         }
 
         .status-bar .status-message.success {
-            color: var(--success-color);
+            color: var(--apple-green);
         }
 
         .status-bar .status-message.error {
-            color: var(--danger-color);
+            color: var(--apple-red);
         }
 
         .status-bar .status-message.warning {
-            color: var(--warning-color);
+            color: var(--apple-orange);
         }
 
         /* ===== Inputs Focus ===== */
         input[type="text"]:focus,
         input[type="url"]:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
         }
-        
+
         /* ===== Loading State ===== */
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -324,38 +404,40 @@
             position: relative;
             color: transparent !important;
         }
-        
+
         .btn-loading::after {
             content: '';
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             top: 50%;
             left: 50%;
-            margin-left: -8px;
-            margin-top: -8px;
+            margin-left: -7px;
+            margin-top: -7px;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.8s linear infinite;
         }
-        
+
         /* ===== Edit Input ===== */
         .edit-nickname-input {
-            padding: 4px 8px;
-            border: 2px solid var(--primary-color);
-            border-radius: 4px;
-            font-size: 16px;
+            padding: 4px 10px;
+            border: 1px solid var(--apple-blue);
+            border-radius: 6px;
+            font-size: 15px;
             width: 100%;
             font-family: inherit;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-primary);
         }
-        
+
         .edit-nickname-input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
         }
-        
-        /* ===== Auto Save Toggle ===== */
+
+        /* ===== Auto Save Toggle — Apple Switch ===== */
         .autosave-container {
             display: flex;
             align-items: center;
@@ -364,189 +446,198 @@
             font-size: 13px;
             color: var(--text-secondary);
         }
-        
+
         .autosave-toggle {
             position: relative;
-            width: 40px;
-            height: 22px;
-            background: var(--border-color);
-            border-radius: 11px;
+            width: 44px;
+            height: 26px;
+            background: var(--text-tertiary);
+            border-radius: 13px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.25s;
         }
-        
+
         .autosave-toggle.active {
-            background: var(--success-color);
+            background: var(--apple-green);
         }
-        
+
         .autosave-toggle::after {
             content: '';
             position: absolute;
-            width: 18px;
-            height: 18px;
+            width: 22px;
+            height: 22px;
             background: white;
             border-radius: 50%;
             top: 2px;
             left: 2px;
-            transition: transform 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
-        
+
         .autosave-toggle.active::after {
             transform: translateX(18px);
         }
-        
+
         .autosave-status {
             font-size: 12px;
             color: var(--text-secondary);
         }
-        
+
         .autosave-status.unsaved {
-            color: var(--warning-color);
+            color: var(--apple-orange);
         }
-        
+
         .autosave-status.saving {
-            color: var(--info-color);
+            color: var(--apple-blue);
         }
-        
+
         .autosave-status.saved {
-            color: var(--success-color);
+            color: var(--apple-green);
         }
-        
-        /* ===== Scrollbar ===== */
+
+        /* ===== Scrollbar — Thin & Subtle ===== */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
-        
+
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
+            background: transparent;
         }
-        
+
         ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background: rgba(0, 0, 0, 0.25);
         }
-        
-        /* ===== Modal ===== */
+
+        /* ===== Modal — Frosted Glass ===== */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
-        
+
         .modal-content {
-            background: white;
-            border-radius: var(--radius);
+            background: var(--glass-bg);
+            backdrop-filter: saturate(180%) blur(40px);
+            -webkit-backdrop-filter: saturate(180%) blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            animation: modalSlideIn 0.3s ease;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
-        
+
         @keyframes modalSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-16px) scale(0.98);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
-        
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-        
+
         .modal-header h3 {
             margin: 0;
             color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
         }
-        
+
         .modal-close {
-            background: none;
+            background: rgba(0, 0, 0, 0.04);
             border: none;
-            font-size: 24px;
+            font-size: 16px;
             cursor: pointer;
             color: var(--text-secondary);
             padding: 0;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
-        
+
         .modal-close:hover {
-            background: #f0f0f0;
+            background: rgba(0, 0, 0, 0.08);
             color: var(--text-primary);
         }
-        
+
         .modal-body {
-            padding: 20px;
+            padding: 20px 24px;
         }
-        
+
         .fileinfo-item {
             display: flex;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             align-items: flex-start;
         }
-        
+
         .fileinfo-label {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-secondary);
             min-width: 80px;
             flex-shrink: 0;
+            font-size: 14px;
         }
-        
+
         .fileinfo-value {
             color: var(--text-primary);
             word-break: break-all;
+            font-size: 14px;
         }
-        
+
         .fileinfo-note {
-            margin-top: 16px;
-            padding: 12px;
-            background: #fff3cd;
-            border-radius: 6px;
-            border-left: 4px solid var(--warning-color);
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: rgba(255, 149, 0, 0.08);
+            border-radius: var(--radius);
+            font-size: 13px;
         }
-        
+
         .fileinfo-note p {
             margin: 0;
             font-size: 13px;
-            color: #856404;
+            color: var(--text-secondary);
         }
-        
+
         .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            padding: 16px 20px;
-            border-top: 1px solid var(--border-color);
+            padding: 16px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
         }
-        
+
         /* ===== Drag & Drop ===== */
         .blogger-item[draggable="true"] {
-            cursor: grab;
+            cursor: default;
         }
 
         .blogger-item[draggable="true"]:active {
@@ -555,23 +646,39 @@
 
         .blogger-item.dragging {
             opacity: 0.4;
-            background: #d0d0d0;
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .blogger-item.drag-over {
-            border-top: 3px solid var(--primary-color);
+            border-top: 2px solid var(--apple-blue);
         }
 
         /* ===== Responsive ===== */
         @media (max-width: 600px) {
+            #app {
+                padding: var(--spacing) 12px;
+            }
+
+            .app-header {
+                padding: 32px 16px 24px;
+            }
+
+            .app-header h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+
             .input-group {
                 flex-direction: column;
             }
-            
+
             .toolbar {
                 justify-content: center;
             }
-            
+
             .btn {
                 flex: 1;
                 justify-content: center;
@@ -593,18 +700,18 @@
 <body>
     <div id="app">
         <header class="app-header">
-            <h1>🔍 HushFollow</h1>
+            <h1>HushFollow</h1>
             <p class="subtitle">Follow with grace, leave no trace</p>
         </header>
         
         <main class="app-main">
             <!-- Toolbar -->
             <section class="toolbar" id="toolbar">
-                <button id="btn-open" class="btn">📂 打开文件</button>
-                <button id="btn-import" class="btn">📥 导入合并</button>
-                <button id="btn-save" class="btn btn-primary" style="display:none;">💾 保存</button>
-                <button id="btn-export" class="btn">📤 另存为</button>
-                <button id="btn-fileinfo" class="btn" style="display:none;">📁 文件信息</button>
+                <button id="btn-open" class="btn">打开文件</button>
+                <button id="btn-import" class="btn">导入合并</button>
+                <button id="btn-save" class="btn btn-primary" style="display:none;">保存</button>
+                <button id="btn-export" class="btn">另存为</button>
+                <button id="btn-fileinfo" class="btn" style="display:none;">文件信息</button>
                 
                 <div class="autosave-container" id="autosave-container" style="display:none;">
                     <span>自动保存</span>
@@ -623,7 +730,7 @@
                 <div class="input-group">
                     <input type="url" id="url-input" placeholder="粘贴微博主页链接，如：https://weibo.com/u/6351705477" class="input-url">
                     <input type="text" id="nickname-input" placeholder="昵称（可选，默认识别ID）" class="input-nickname">
-                    <button id="btn-add" class="btn btn-primary">➕ 添加</button>
+                    <button id="btn-add" class="btn btn-primary">添加</button>
                 </div>
             </section>
             
@@ -641,7 +748,7 @@
                             无需在平台上关注，也能随时查看博主动态
                         </p>
                         <button id="btn-welcome-quickstart" class="btn btn-success" style="font-size:16px;padding:12px 24px;">
-                            🚀 快速开始
+                            快速开始
                         </button>
                     </div>
                     <!-- Empty State -->
@@ -664,7 +771,7 @@
     <div id="fileinfo-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>📁 数据文件信息</h3>
+                <h3>数据文件信息</h3>
                 <button class="modal-close" onclick="closeFileInfo()">&times;</button>
             </div>
             <div class="modal-body">
@@ -685,11 +792,11 @@
                     <span class="fileinfo-value" id="fileinfo-location">-</span>
                 </div>
                 <div class="fileinfo-note">
-                    <p>💡 提示：浏览器无法直接打开本地文件夹。请根据文件名在文件资源管理器中手动定位。</p>
+                    <p>提示：浏览器无法直接打开本地文件夹。请根据文件名在文件资源管理器中手动定位。</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="copyFileName()">📋 复制文件名</button>
+                <button class="btn" onclick="copyFileName()">复制文件名</button>
                 <button class="btn btn-primary" onclick="closeFileInfo()">关闭</button>
             </div>
         </div>
@@ -1279,15 +1386,7 @@
             
             // Browser cannot access full path, show helpful message
             if (currentFileName) {
-                locationEl.innerHTML = `
-                    <div style="color: var(--text-secondary);">
-                        <div>📁 文件存储在您的电脑本地</div>
-                        <div style="margin-top: 4px; font-size: 12px;">
-                            提示：使用快捷键 Ctrl+J 可打开浏览器的下载列表，
-                            右键点击文件选择"在文件夹中显示"即可定位
-                        </div>
-                    </div>
-                `;
+                locationEl.textContent = '文件存储在您的电脑本地';
             } else {
                 locationEl.textContent = '未选择文件';
             }
@@ -1466,7 +1565,7 @@
             
             div.innerHTML = `
                 <div class="blogger-info">
-                    <h4 class="blogger-nickname">${escapeHtml(blogger.nickname)}</h4>
+                    <div class="blogger-nickname-wrapper"><a href="${blogger.url}" target="_blank" rel="noopener noreferrer" class="blogger-nickname">${escapeHtml(blogger.nickname)}</a></div>
                     <a href="${blogger.url}" target="_blank" rel="noopener noreferrer">${blogger.url}</a>
                 </div>
                 <div class="blogger-actions">
@@ -1622,15 +1721,15 @@
             
             const nicknameEl = item.querySelector('.blogger-nickname');
             const currentNickname = blogger.nickname;
-            
+
             // Replace with input
             const input = document.createElement('input');
             input.type = 'text';
             input.value = currentNickname;
             input.className = 'edit-nickname-input';
             input.style.cssText = 'padding: 4px 8px; border: 2px solid var(--primary-color); border-radius: 4px; font-size: 16px; width: 100%;';
-            
-            nicknameEl.replaceWith(input);
+
+            nicknameEl.parentElement.replaceWith(input);
             input.focus();
             input.select();
             
